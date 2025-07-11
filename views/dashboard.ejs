@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Dashboard - QuizMaker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gradient-to-br from-purple-100 to-blue-100 min-h-screen text-gray-800">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md py-4 px-6 flex justify-between items-center">
+    <a href="/" class="text-2xl font-bold text-purple-700">QuizMaker</a>
+    <div class="space-x-4">
+      <a href="/quiz/create" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-md shadow-sm transition">Create Quiz</a>
+      <a href="/logout" class="text-gray-600 hover:text-red-600 font-medium">Logout</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <h1 class="text-3xl font-bold mb-8 text-center">Welcome, <%= user.username %> 👋</h1>
+
+    <% if (quizzes.length === 0) { %>
+      <div class="bg-white p-8 rounded-xl shadow text-center">
+        <p class="text-gray-600 text-lg mb-4">You haven't created any quizzes yet.</p>
+        <a href="/quiz/create" class="inline-block bg-purple-600 hover:bg-purple-700 text-white px-6 py-2 rounded-md shadow-sm transition">Create Your First Quiz</a>
+      </div>
+    <% } else { %>
+      <h2 class="text-2xl font-semibold mb-6">Your Quizzes</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        <% quizzes.forEach(quiz => { %>
+          <div class="bg-white p-6 rounded-xl border border-gray-300 relative overflow-hidden">
+
+            <!-- Share Icon (Top-right) -->
+            <button onclick="showShare('<%= quiz._id %>')" class="absolute top-4 right-4 text-gray-600 hover:text-green-600 transition text-xl z-10" title="Share">
+              <i class='bx bx-share-alt'></i>
+            </button>
+
+            <!-- Title & Description -->
+            <h3 class="text-lg font-semibold text-purple-700 mb-2 pr-10 truncate"><%= quiz.title %></h3>
+            <p class="text-gray-600 text-sm line-clamp-3 h-[60px] overflow-hidden mb-4"><%= quiz.description %></p>
+
+            <!-- View Stats Button -->
+            <a href="/quiz/<%= quiz._id %>/stats" class="border border-gray-400 text-gray-700 hover:bg-gray-100 px-3 py-1.5 rounded-md text-sm transition">
+              View Details
+            </a>
+
+            <!-- Share Box -->
+            <div id="share-<%= quiz._id %>" class="hidden absolute top-4 left-4 right-4 z-20 bg-white border border-gray-200 p-4 rounded-xl shadow-lg">
+  <p class="text-sm font-medium mb-2">Shareable Link</p>
+  <div class="flex items-center">
+    <input type="text" id="link-<%= quiz._id %>" value="http://localhost:3000/quiz/<%= quiz._id %>" readonly class="flex-grow border px-3 py-2 rounded mr-2 text-sm bg-gray-50" />
+    
+    <!-- Copy Button with Icon -->
+    <button onclick="copyLink('<%= quiz._id %>')" class="bg-gray-800 hover:bg-gray-900 text-white px-3 py-2 rounded text-sm transition flex items-center justify-center">
+      <i class='bx bx-copy text-lg'></i>
+    </button>
+  </div>
+
+  <button onclick="hideShare('<%= quiz._id %>')" class="text-sm text-red-500 hover:underline mt-2">Close</button>
+</div>
+
+
+            <!-- Created Date -->
+            <p class="text-xs text-gray-400 mt-4 pr-6">Created: <%= quiz.createdAt.toDateString() %></p>
+
+            <!-- Delete Icon (Bottom-right) -->
+            <button onclick="deleteQuiz('<%= quiz._id %>')" class="absolute bottom-4 right-4 text-gray-500 hover:text-red-600 transition text-xl" title="Delete">
+              <i class='bx bx-trash'></i>
+            </button>
+
+          </div>
+        <% }) %>
+      </div>
+    <% } %>
+  </main>
+
+  <!-- Script -->
+  <script>
+    function showShare(id) {
+      document.getElementById('share-' + id).classList.remove('hidden');
+    }
+
+    function hideShare(id) {
+      document.getElementById('share-' + id).classList.add('hidden');
+    }
+
+    function copyLink(id) {
+      const linkInput = document.getElementById('link-' + id);
+      linkInput.select();
+      linkInput.setSelectionRange(0, 99999);
+      document.execCommand('copy');
+      alert('Link copied to clipboard!');
+    }
+
+      function deleteQuiz(id) {
+    if (confirm('Are you sure you want to delete this quiz? This action cannot be undone.')) {
+      fetch(`/quiz/${id}/delete`, {
+        method: 'DELETE'
+      })
+      .then(res => {
+        if (res.ok) {
+          location.reload();
+        } else {
+          alert('Failed to delete quiz.');
+        }
+      })
+      .catch(() => alert('Something went wrong!'));
+    }
+  }
+  </script>
+  <% if (typeof message !== 'undefined') { %>
+  <div id="popup-msg" class="fixed bottom-5 right-5 bg-purple-600 text-white px-4 py-2 rounded shadow z-50 animate-bounce">
+    <%= message %>
+  </div>
+  <script>
+    setTimeout(() => {
+      document.getElementById('popup-msg')?.remove();
+    }, 3000);
+  </script>
+<% } %>
+
+</body>
+</html>

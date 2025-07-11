@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Quiz - QuizMaker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 min-h-screen px-4 py-10 flex items-start justify-center">
+
+  <div class="w-full max-w-3xl bg-white p-6 sm:p-8 rounded-lg shadow-lg">
+    <h1 class="text-3xl sm:text-4xl font-bold mb-6 text-center text-gray-800">Create a New Quiz</h1>
+
+    <form action="/quiz/create" method="POST" id="quizForm" class="space-y-6">
+      <!-- Title -->
+      <div>
+        <label class="block mb-1 text-sm font-medium text-gray-700">Quiz Title</label>
+        <input name="title" type="text" placeholder="Quiz Title"
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+          required />
+      </div>
+
+      <!-- Description -->
+      <div>
+        <label class="block mb-1 text-sm font-medium text-gray-700">Description</label>
+        <textarea name="description" placeholder="Quiz Description"
+          class="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+          required></textarea>
+      </div>
+
+      <!-- Questions Wrapper -->
+      <div id="questions-wrapper" class="space-y-6">
+        <!-- First Question Block -->
+        <div class="question-block border border-gray-200 p-4 rounded-lg bg-gray-100 shadow-sm space-y-4">
+          <h3 class="text-lg font-semibold text-gray-800">Question 1</h3>
+
+          <input name="questions[0][question]" type="text" placeholder="Enter question text"
+            class="w-full p-3 border rounded-lg" required />
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <% for (let i = 0; i < 4; i++) { %>
+              <input name="questions[0][options][]" type="text" placeholder="Option <%= i+1 %>"
+                class="p-3 border rounded-lg" required />
+            <% } %>
+          </div>
+
+          <input name="questions[0][correctAnswerIndex]" type="number" min="0" max="3"
+            placeholder="Correct Option Index (0-3)" class="w-full p-3 border rounded-lg" required />
+        </div>
+      </div>
+
+      <!-- Add Question Button -->
+      <div class="flex justify-center">
+        <button type="button" onclick="addQuestion()"
+          class="border border-gray-400 text-gray-700 hover:bg-gray-100 px-4 py-2 rounded-md text-md transition">
+          + Add Question
+        </button>
+      </div>
+
+      <!-- Submit -->
+      <div>
+        <button type="submit"
+          class="w-full bg-purple-600 text-white py-3 rounded-lg text-lg hover:bg-purple-700 transition">
+          Create Quiz
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Flash Popup -->
+  <% if (typeof message !== 'undefined') { %>
+    <div id="popup-msg"
+      class="fixed bottom-5 left-1/2 -translate-x-1/2 bg-purple-600 text-white px-4 py-2 rounded shadow z-50 transition-all duration-300 animate-fadeIn">
+      <%= message %>
+    </div>
+    <script>
+      setTimeout(() => {
+        document.getElementById('popup-msg')?.remove();
+      }, 3000);
+    </script>
+  <% } %>
+
+  <script>
+    let questionIndex = 1;
+
+    function addQuestion() {
+      const wrapper = document.getElementById('questions-wrapper');
+      const div = document.createElement('div');
+      div.className = "question-block border border-gray-200 p-4 rounded-lg bg-gray-50 shadow-sm space-y-4";
+
+      div.innerHTML = `
+        <h3 class="text-lg font-semibold text-gray-800">Question ${questionIndex + 1}</h3>
+        <input name="questions[${questionIndex}][question]" type="text" placeholder="Enter question text" class="w-full p-3 border rounded-lg" required />
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input name="questions[${questionIndex}][options][]" type="text" placeholder="Option 1" class="p-3 border rounded-lg" required />
+          <input name="questions[${questionIndex}][options][]" type="text" placeholder="Option 2" class="p-3 border rounded-lg" required />
+          <input name="questions[${questionIndex}][options][]" type="text" placeholder="Option 3" class="p-3 border rounded-lg" required />
+          <input name="questions[${questionIndex}][options][]" type="text" placeholder="Option 4" class="p-3 border rounded-lg" required />
+        </div>
+        <input name="questions[${questionIndex}][correctAnswerIndex]" type="number" min="0" max="3" placeholder="Correct Option Index (0-3)" class="w-full p-3 border rounded-lg" required />
+      `;
+
+      wrapper.appendChild(div);
+      questionIndex++;
+    }
+  </script>
+
+  <style>
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 0.5s ease-out;
+    }
+  </style>
+
+</body>
+</html>

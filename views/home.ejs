@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>QuizMaker - Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <style>
+  @keyframes float {
+    0% {
+      transform: translateY(0);
+      animation-timing-function: ease-in; /* going up slow */
+    }
+    50% {
+      transform: translateY(-10px);
+      animation-timing-function: cubic-bezier(0.8, 1, 1, 1); /* fall faster */
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+
+  .animate-float {
+    animation: float 2.5s infinite;
+  }
+
+  .floating-shadow {
+    width: 220px; 
+    height: 12px;
+    background: radial-gradient(circle, rgba(0, 0, 0, 0.2) 0%, transparent 70%);
+    margin: 0 auto;
+    transform: translateY(23px); 
+    filter: blur(2px);
+    z-index: 0;
+  }
+</style>
+</head>
+<body class="bg-gradient-to-br from-purple-100 via-white to-blue-100 text-gray-800 min-h-screen flex flex-col">
+
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md py-4 px-6 flex justify-between items-center sticky top-0 z-10">
+    <a href="/" class="text-2xl font-extrabold text-purple-700 tracking-wide">QuizMaker</a>
+
+    <% if (!session.user) { %>
+      <div class="space-x-4">
+        <a href="/login" class="text-gray-700 hover:text-purple-600 font-medium">Login</a>
+        <a href="/register" class="text-gray-700 hover:text-purple-600 font-medium">Register</a>
+      </div>
+    <% } else { %>
+      <a href="/dashboard" class="flex items-center space-x-2 hover:text-purple-600">
+        <svg class="w-7 h-7 text-purple-700" fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M5.121 17.804A9.003 9.003 0 0112 15c2.21 0 4.208.805 5.879 2.137M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+        </svg>
+      </a>
+    <% } %>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="flex-grow flex flex-col items-center justify-center text-center px-6 py-24 relative">
+    <h1 class="text-6xl font-bold text-purple-700 mb-6">Create. Share. Test Knowledge.</h1>
+    <p class="text-xl text-gray-600 max-w-2xl mb-10">
+      Make your own quizzes and share them with friends or the world. It's fast, free, and fun!
+    </p>
+
+    <div class="relative flex flex-col items-center">
+      <!-- Shadow (stays below) -->
+      <div class="floating-shadow absolute bottom-0"></div>
+
+      <!-- Floating Button -->
+      <a href="/quiz/create"
+         class="animate-float relative z-10 bg-purple-600 hover:bg-purple-700 text-white font-semibold px-8 py-4 text-lg rounded-full shadow-lg transition">
+        Make a Quiz
+      </a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="text-center text-sm text-gray-500 py-6 bg-white shadow-inner">
+    &copy; <%= new Date().getFullYear() %> QuizMaker. All rights reserved.
+  </footer>
+
+  <% if (typeof message !== 'undefined') { %>
+    <div id="popup-msg" class="fixed bottom-5 right-5 bg-purple-600 text-white px-4 py-2 rounded shadow z-50 animate-bounce">
+      <%= message %>
+    </div>
+    <script>
+      setTimeout(() => {
+        document.getElementById('popup-msg')?.remove();
+      }, 3000);
+    </script>
+  <% } %>
+
+</body>
+</html>

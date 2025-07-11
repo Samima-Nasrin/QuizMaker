@@ -48,7 +48,8 @@ app.use(session({
 app.use((req, res, next) => {
   res.locals.session = req.session;
   res.locals.success = req.flash('success'); 
-  res.locals.error = req.flash('error');     
+  res.locals.error = req.flash('error');
+  res.locals.BASE_URL = process.env.BASE_URL;     
   next();
 });
 

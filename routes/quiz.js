@@ -29,12 +29,7 @@ router.post('/create', isLoggedIn, async (req, res) => {
   });
 });
 
-// GET quiz view page (take quiz)
-router.get('/:id', isLoggedIn, async (req, res) => {
-  const quiz = await Quiz.findById(req.params.id);
-  if (!quiz) return res.status(404).send('Quiz not found');
-  res.render('view', { quiz });
-});
+
 
 // POST submit quiz and show result
 router.post('/:id/submit', isLoggedIn, async (req, res) => {
@@ -116,6 +111,13 @@ router.delete('/:id/delete', isLoggedIn, async (req, res) => {
     console.error(err);
     res.status(500).json({ message: 'Error deleting quiz' });
   }
+});
+
+// GET quiz view page (take quiz)
+router.get('/:id', isLoggedIn, async (req, res) => {
+  const quiz = await Quiz.findById(req.params.id);
+  if (!quiz) return res.status(404).send('Quiz not found');
+  res.render('view', { quiz });
 });
 
 module.exports = router;

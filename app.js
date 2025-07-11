@@ -10,6 +10,7 @@ const flash = require('connect-flash');
 const authRoutes = require('./routes/auth');
 const quizRoutes = require('./routes/quiz');
 const userRoutes = require('./routes/user');
+const ExpressError = require("./utils/ExpressError.js");
 
 const port = process.env.PORT || 3000;
 // Flash setup
